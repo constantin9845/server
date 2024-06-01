@@ -38,26 +38,28 @@ public class ConnectionHandler extends Thread{
 	public void handleConnection() throws IOException{
 		while(true){
 		
-			String line = inFromClient.readLine();
+			char line = inFromClient.read();
 			// File transfer request
-			if(line.equals("File is being transfered")){
+			if(line == '2'){
 				outToClient.println(line);
 				outToClient.flush();
 			}
 			// Message transfer request
-			else if(line.equals("Message transfer requested")){
+			else if(line == '1'){
+				System.out.println("\n\t|User request for message received. waiting for data.");
+				
 				String message = inFromClient.readLine();
 				System.out.println("\n\t|User message: "+message);
-				outToClient.println("\n\t|Message received.");
+				outToClient.println("Message received.");
 			}
 			// Empty input
-			else if(line.equals("No input provided")){
-				outToClient.println("\n\t|Server could not handle request. Userinput empty.");
+			else if(line == '3'){
+				outToClient.println("Server could not handle request. Userinput empty.");
 			}
 			// Error with input
 			else{
 				System.out.println("\n\t|Something went wrong with user request");
-				outToClient.println("\n\t|Server could not handle request. Check user input again.");
+				outToClient.println("Server could not handle request. Check user input again.");
 			}
 			
 		}

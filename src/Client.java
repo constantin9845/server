@@ -33,10 +33,15 @@ public class Client{
 
 				// Message mode
 				if(clientInput.equals("Text input")){
-					outToServer.println("Message transfer requested");
+					outToServer.print('1');
 					outToServer.flush();
 
-					outToServer.println(clientInput);
+					inFromServer.readLine();
+
+					System.out.println("\n\t|enter message: ");
+					String input = sc.nextLine();
+
+					outToServer.println(input);
 					outToServer.flush();
 				}
 				// File mode
@@ -55,7 +60,7 @@ public class Client{
 					outToServer.flush();
 				}
 				
-				System.out.printf("\n|Message from server: <<%s>>", inFromServer.readLine());
+				System.out.printf("\n\t|Message from server: <<%s>>", inFromServer.readLine());
 			}
 			
 			clean();
@@ -79,7 +84,7 @@ public class Client{
 	
 	public String readInput(){
 		System.out.print("\n\t|: ");
-		String line = sc.nextLine();
+		String line = sc.next();
 
 		// text input
 		if(line.length() == 1 && line.charAt(0) == '1'){
