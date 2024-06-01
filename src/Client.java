@@ -35,7 +35,7 @@ public class Client{
 				if(clientInput.equals("Text input")){
 					outToServer.println("Message transfer requested");
 					outToServer.flush();
-					
+
 					outToServer.println(clientInput);
 					outToServer.flush();
 				}
@@ -98,7 +98,7 @@ public class Client{
 			return "Empty input";
 		}
 		else{
-			return "Unknown input."
+			return "Unknown input.";
 		}
 
 	}
