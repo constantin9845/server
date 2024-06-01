@@ -9,11 +9,11 @@ public class Server{
 		try{
 			serverSocket = new ServerSocket(port);
 
-			System.out.println("\nListening on port: "+port);
+			System.out.println("\n\t|Listening on port: "+port);
 			while(true){
 				Socket connection = serverSocket.accept();
 				ConnectionHandler handler = new ConnectionHandler(connection);	
-				System.out.println("Port: "+connection.getInetAddress());
+				System.out.println("\n\t|Ipaddress connected: "+connection.getInetAddress());
 				try{
 					handler.handleConnection();
 				}

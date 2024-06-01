@@ -39,9 +39,27 @@ public class ConnectionHandler extends Thread{
 		while(true){
 		
 			String line = inFromClient.readLine();
+			// File transfer request
+			if(line.equals("File is being transfered")){
+				outToClient.println(line);
+				outToClient.flush();
+			}
+			// Message transfer request
+			else if(line.equals("Message transfer requested")){
+				String message = inFromClient.readLine();
+				System.out.println("\n\t|User message: "+message);
+				outToClient.println("\n\t|Message received.");
+			}
+			// Empty input
+			else if(line.equals("No input provided")){
+				outToClient.println("\n\t|Server could not handle request. Userinput empty.");
+			}
+			// Error with input
+			else{
+				System.out.println("\n\t|Something went wrong with user request");
+				outToClient.println("\n\t|Server could not handle request. Check user input again.");
+			}
 			
-			outToClient.println(line);
-			outToClient.flush();
 		}
 	}
 	

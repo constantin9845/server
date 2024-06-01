@@ -26,10 +26,34 @@ public class Client{
 			outToServer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 			
 			String clientInput;
-			
+
+			System.out.printf("\n\t|1: text input ; 2: file input ; 3: quit: ");
+
 			while((clientInput = readInput()) != null || !clientInput.equals("quit")){
-				outToServer.println(clientInput);
-				outToServer.flush();
+
+				// Message mode
+				if(clientInput.equals("Text input")){
+					outToServer.println("Message transfer requested");
+					outToServer.flush();
+					
+					outToServer.println(clientInput);
+					outToServer.flush();
+				}
+				// File mode
+				else if(clientInput.equals("File input")){
+					utToServer.println("File is being transfered");
+					outToServer.flush();
+				}
+				// Empty input provided
+				else if(clientInput.equals("Empty input")){
+					outToServer.println("No input provided");
+					outToServer.flush();
+				}
+				// error
+				else{
+					outToServer.println("Something went wrong with user input");
+					outToServer.flush();
+				}
 				
 				System.out.printf("\n|Message from server: <<%s>>", inFromServer.readLine());
 			}
@@ -54,9 +78,29 @@ public class Client{
 	}
 	
 	public String readInput(){
-		System.out.print("\nEnter sentence: ");
+		System.out.print("\n\t|: ");
 		String line = sc.nextLine();
-		return line;
+
+		// text input
+		if(line.length() == 1 && line.charAt(0) == '1'){
+			return "Text input";
+		}
+		// file input
+		else if(line.length() == 1 && line.charAt(0) == '2'){
+			return "File input";
+		}
+		// quit
+		else if(line.length() == 1 && line.charAt(0) == '3'){
+			return "quit";
+		}
+		// empty input
+		else if(line.length() == 0){
+			return "Empty input";
+		}
+		else{
+			return "Unknown input."
+		}
+
 	}
 	
 	public static void main(String[] args){
