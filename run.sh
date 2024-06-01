@@ -1,9 +1,10 @@
-javac -d bin src/*.java
-if [ "$#" == 1 ]
+if [ $# -eq 1 ]
 then
   	# Run Server
-	java -cp bin Server $1	
+  	javac -d bin src/*.java
+	java -cp bin Server "$1"	
 else
 	# Run Client
-	java -cp bin Client $1 $2
+	javac -d bin src/*.java
+	java -cp bin Client "$1" "$2"
 fi

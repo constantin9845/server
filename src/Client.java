@@ -41,7 +41,7 @@ public class Client{
 				}
 				// File mode
 				else if(clientInput.equals("File input")){
-					utToServer.println("File is being transfered");
+					outToServer.println("File is being transfered");
 					outToServer.flush();
 				}
 				// Empty input provided
