@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+import java.io.File;
 
 public class Client{
 	private Socket socket;
@@ -10,6 +11,7 @@ public class Client{
 	private BufferedReader inFromKeyboard;
 	private PrintWriter outToServer;
 	private Scanner sc;
+	private char[] payload;
 	
 	public Client(String host, int port){
 		this.host = host;
@@ -25,42 +27,40 @@ public class Client{
 			inFromKeyboard = new BufferedReader(new InputStreamReader(System.in));
 			outToServer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 			
-			String clientInput;
 
-			System.out.printf("\n\t|1: text input ; 2: file input ; 3: quit: ");
+			int line = 0;
 
-			while((clientInput = readInput()) != null || !clientInput.equals("quit")){
+			while(line != 3){
+				System.out.printf("\n\t|1: text input ; 2: file input ; 3: quit: ");
+				line = sc.nextInt();
+				sc.nextLine();
 
-				// Message mode
-				if(clientInput.equals("Text input")){
-					outToServer.print('1');
-					outToServer.flush();
-
-					inFromServer.readLine();
-
-					System.out.println("\n\t|enter message: ");
+				// 1. message
+				if(line == 1){
+					System.out.print("\n\t|Enter a message: ");
 					String input = sc.nextLine();
-
-					outToServer.println(input);
+					this.payload = toCharArray(input, 1);
+					outToServer.write(getPayloadSize());
+					outToServer.write(this.payload);
 					outToServer.flush();
 				}
-				// File mode
-				else if(clientInput.equals("File input")){
-					outToServer.println("File is being transfered");
+				// 2. file
+				else if(line == 2){
+					System.out.print("\n\t|Enter file path: ");
+					String input = sc.nextLine();
+					this.payload = toCharArray(input, 2);
+					outToServer.write(getPayloadSize());
+					outToServer.write(this.payload);
 					outToServer.flush();
 				}
-				// Empty input provided
-				else if(clientInput.equals("Empty input")){
-					outToServer.println("No input provided");
-					outToServer.flush();
-				}
-				// error
+				else if (line == 3) {
+                    System.out.println("\n\t|Quitting...");
+                    break;
+                }
+				// 3. Error
 				else{
-					outToServer.println("Something went wrong with user input");
-					outToServer.flush();
+					System.out.println("\n\t|Invalid...");
 				}
-				
-				System.out.printf("\n\t|Message from server: <<%s>>", inFromServer.readLine());
 			}
 			
 			clean();
@@ -81,31 +81,21 @@ public class Client{
 			System.out.println(e.getMessage());
 		}
 	}
-	
-	public String readInput(){
-		System.out.print("\n\t|: ");
-		String line = sc.next();
 
-		// text input
-		if(line.length() == 1 && line.charAt(0) == '1'){
-			return "Text input";
-		}
-		// file input
-		else if(line.length() == 1 && line.charAt(0) == '2'){
-			return "File input";
-		}
-		// quit
-		else if(line.length() == 1 && line.charAt(0) == '3'){
-			return "quit";
-		}
-		// empty input
-		else if(line.length() == 0){
-			return "Empty input";
-		}
-		else{
-			return "Unknown input.";
-		}
 
+	public char[] toCharArray(String input, int payloadType){
+		char[] out = new char[input.length()+1];
+		out[0] = (char)payloadType;
+
+		for(int i = 0; i<input.length();i++){
+			out[i+1] = input.charAt(i); 
+		} 
+
+		return out;
+	}
+
+	public int getPayloadSize(){
+		return this.payload.length;
 	}
 	
 	public static void main(String[] args){
