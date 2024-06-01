@@ -1,3 +1,4 @@
+javac -d bin src/*.java
 if [ "$#" == 1 ]
 then
   	# Run Server
