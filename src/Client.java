@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
-import java.io.File;
 
 public class Client{
 	private Socket socket;
@@ -12,20 +11,29 @@ public class Client{
 	private PrintWriter outToServer;
 	private Scanner sc;
 	private char[] payload;
+
+	private DataOutputStream fileToServer;
 	
 	public Client(String host, int port){
 		this.host = host;
 		this.port = port;
 		this.sc = new Scanner(System.in);
-		requestService();
+		try{
+			requestService();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
-	public void requestService(){
+	public void requestService() throws Exception{
 		try{
 			this.socket = new Socket(this.host, this.port);
 			inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			inFromKeyboard = new BufferedReader(new InputStreamReader(System.in));
 			outToServer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+			fileToServer = new DataOutputStream(socket.getOutputStream());
 			
 
 			int line = 0;
@@ -46,12 +54,7 @@ public class Client{
 				}
 				// 2. file
 				else if(line == 2){
-					System.out.print("\n\t|Enter file path: ");
-					String input = sc.nextLine();
-					this.payload = toCharArray(input, 2);
-					outToServer.write(getPayloadSize());
-					outToServer.write(this.payload);
-					outToServer.flush();
+					sendFile();
 				}
 				else if (line == 3) {
                     System.out.println("\n\t|Quitting...");
@@ -96,6 +99,28 @@ public class Client{
 
 	public int getPayloadSize(){
 		return this.payload.length;
+	}
+
+	public void sendFile() throws Exception{
+		System.out.print("\n\t|Enter path: ");
+		String path = sc.nextLine();
+		File f = new File(path);
+
+		FileInputStream fileInputStream = new FileInputStream(f);
+
+		fileToServer.writeLong(f.length());
+
+		int bytes = 0;
+
+		byte[] buffer = new byte[4*1024];
+		while(
+			(bytes = fileInputStream.read(buffer)) != -1)
+		{
+			fileToServer.write(buffer, 0, bytes);
+			fileToServer.flush();
+		}
+
+		fileInputStream.close();
 	}
 	
 	public static void main(String[] args){

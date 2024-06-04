@@ -1,1 +1,1 @@
-git pull git@github.com:constantin9845/HomeServer.git
+git pull git@github.com:constantin9845/server.git
