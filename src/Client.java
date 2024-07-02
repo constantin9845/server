@@ -106,21 +106,29 @@ public class Client{
 		String path = sc.nextLine();
 		File f = new File(path);
 
-		FileInputStream fileInputStream = new FileInputStream(f);
+		if(f.exists()){
+			FileInputStream fileInputStream = new FileInputStream(f);
 
-		fileToServer.writeLong(f.length());
+			fileToServer.writeLong(f.length());
 
-		int bytes = 0;
+			int bytes = 0;
 
-		byte[] buffer = new byte[4*1024];
-		while(
-			(bytes = fileInputStream.read(buffer)) != -1)
-		{
-			fileToServer.write(buffer, 0, bytes);
-			fileToServer.flush();
+			byte[] buffer = new byte[4*1024];
+			while(
+				(bytes = fileInputStream.read(buffer)) != -1)
+			{
+				fileToServer.write(buffer, 0, bytes);
+				fileToServer.flush();
+			}
+
+			fileInputStream.close();
+		}
+		else{
+			System.out.print("\n\t|File not found.");
+			return;
 		}
 
-		fileInputStream.close();
+		
 	}
 	
 	public static void main(String[] args){
