@@ -59,7 +59,7 @@ public class ConnectionHandler extends Thread{
 				System.out.println(payload[i]);
 			}
 
-			receiveFile("test.txt");
+			receiveFile("files/test.txt");
 			
 		}
 	} 
